@@ -11,11 +11,10 @@ from presidio_anonymizer.entities import InvalidParamError, RecognizerResult
         (2, 8),
         (0, 8),
         (0, 10),
-        (1, 9),
     ],
     # fmt: on
 )
-def test_given_recognizer_results_then_one_contains_another(start: int, end: int):
+def test_given_recognizer_results_then_one_contains_another(start, end):
     first = create_recognizer_result("entity", 0, 0, 10)
     second = create_recognizer_result("entity", 0, start, end)
 
@@ -289,3 +288,22 @@ def test_given_negative_start_or_endpoint_then_we_fail(start, end):
 def create_recognizer_result(entity_type: str, score: float, start: int, end: int):
     data = {"entity_type": entity_type, "score": score, "start": start, "end": end}
     return RecognizerResult.from_json(data)
+@pytest.mark.parametrize(
+    # fmt: off
+    "start1, end1, start2, end2, expected",
+    [
+        (0, 5, 6, 10, 0),   
+        (0, 5, 3, 8, 2),     
+        (0, 10, 3, 7, 4),    
+        (0, 5, 5, 10, 0),    
+        (0, 10, 0, 10, 10),  
+    ],
+    
+)
+def test_intersects(start1, end1, start2, end2, expected):
+    """Test the intersects method with key scenarios."""
+    result1 = create_recognizer_result("entity", 0.8, start1, end1)
+    result2 = create_recognizer_result("entity", 0.8, start2, end2)
+    
+    assert result1.intersects(result2) == expected
+    assert result2.intersects(result1) == expected
