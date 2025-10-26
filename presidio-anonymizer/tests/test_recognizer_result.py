@@ -11,10 +11,11 @@ from presidio_anonymizer.entities import InvalidParamError, RecognizerResult
         (2, 8),
         (0, 8),
         (0, 10),
+        (1, 9),
     ],
     # fmt: on
 )
-def test_given_recognizer_results_then_one_contains_another(start, end):
+def test_given_recognizer_results_then_one_contains_another(start: int, end: int):
     first = create_recognizer_result("entity", 0, 0, 10)
     second = create_recognizer_result("entity", 0, start, end)
 
